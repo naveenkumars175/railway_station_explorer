@@ -36,5 +36,6 @@ jobs:
       uses: SonarSource/sonarqube-scan-action@master
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      working-directory: ${{ github.workspace }}
+      with:
+        projectBaseDir: ${{ github.workspace }}
 
