@@ -8,7 +8,7 @@ on:
 
 jobs:
   sonarqube:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
@@ -37,5 +37,8 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
-        projectBaseDir: ${{ github.workspace }}
+        args: >
+          -Dsonar.projectBaseDir=${{ github.workspace }}
+          -Dsonar.host.url=http://localhost:9000
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
