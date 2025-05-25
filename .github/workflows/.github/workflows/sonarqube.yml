@@ -1,0 +1,43 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests with coverage
+      run: |
+        PYTHONPATH=${{ github.workspace }} pytest --cov=app --cov-report=xml
+
+
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@master
+      with:
+        projectBaseDir: ${{ github.workspace }}
+        args: >
+          -Dsonar.projectKey=railway_station_explorer
+          -Dsonar.sources=app
+          -Dsonar.host.url=http://localhost:9000
+          -Dsonar.python.coverage.reportPaths=coverage.xml
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
